@@ -1,4 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:moc_firebase/analytics/analytics_provider.dart';
 
@@ -8,6 +10,17 @@ import 'firebase_options.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  FlutterError.onError = (errorDetails) {
+    FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
+  };
+
+  // Pass all uncaught asynchronous errors that aren't handled by the Flutter framework to Crashlytics
+  PlatformDispatcher.instance.onError = (error, stack) {
+    FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+    return true;
+  };
+
   runApp(const MyApp());
 }
 
@@ -56,11 +69,14 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    _init();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _init());
   }
 
   void _init() async {
-    await AnalyticsProvider.of(context).setUserProperty('user_name', 'Thomas');
+    await FirebaseCrashlytics.instance.setUserIdentifier('mon_user_id');
+    if (mounted) {
+      await AnalyticsProvider.of(context).setUserProperty('user_name', 'Thomas');
+    }
     if (mounted) {
       await AnalyticsProvider.of(context).setUserProperty('user_height', '183');
     }
@@ -72,6 +88,15 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       _counter++;
     });
+  }
+
+  void _crash() async {
+    try {
+      await Future.delayed(const Duration(seconds: 1));
+      throw Exception('Crash button pressed');
+    } catch (error) {
+      FirebaseCrashlytics.instance.recordError(error, StackTrace.current);
+    }
   }
 
   @override
@@ -94,10 +119,20 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          FloatingActionButton(
+            onPressed: _crash,
+            tooltip: 'Crash',
+            child: const Icon(Icons.car_crash),
+          ),
+          FloatingActionButton(
+            onPressed: _incrementCounter,
+            tooltip: 'Increment',
+            child: const Icon(Icons.add),
+          ),
+        ],
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }

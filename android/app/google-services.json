@@ -29,6 +29,13 @@
             {
               "client_id": "954133221148-bu1mr3etosd719h7jabpurt3mifk8kc2.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "954133221148-qvc57ebnuhvml880ccoqcrndp3mmt69i.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.mocFirebase"
+              }
             }
           ]
         }
