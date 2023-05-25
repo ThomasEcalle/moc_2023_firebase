@@ -85,13 +85,26 @@ class _MyHomePageState extends State<MyHomePage> {
       await FirebaseCrashlytics.instance.recordError(error, stackTrace);
     }
   }
-  
-  void _testFirestore() {
+
+  void _testFirestore() async {
     final CollectionReference collectionReference = FirebaseFirestore.instance.collection('users');
 
     try {
-      collectionReference.add({'name': 'Bob', 'age': 30});
-    } catch(error) {
+      //final DocumentReference documentReference = await collectionReference.add({'name': 'Bob', 'age': 30});
+      //await collectionReference.doc('toto').set({'name': 'toto', 'age': 25});
+      //await FirebaseFirestore.instance.collection('users/toto/pets').add({'name': 'Milou'});
+      //await collectionReference.doc('toto').update({'name': 'Bernard'});
+
+      // final userReference = await collectionReference.doc('toto').get();
+      // debugPrint('User data: ${userReference.data()}');
+      //
+      // final ref = await collectionReference.get();
+      // debugPrint('Collection data: ${ref.docs}');
+
+      await collectionReference.doc('toto').delete();
+
+      //debugPrint('Document added with id: ${documentReference.id}');
+    } catch (error) {
       debugPrint('Error writting in firestore: $error');
     }
   }
