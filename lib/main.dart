@@ -61,13 +61,13 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _init() async {
-    await FirebaseCrashlytics.instance.setUserIdentifier('mon_user_id');
-    if (mounted) {
-      await AnalyticsProvider.of(context).setUserProperty('user_name', 'Thomas');
-    }
-    if (mounted) {
-      await AnalyticsProvider.of(context).setUserProperty('user_height', '183');
-    }
+    // await FirebaseCrashlytics.instance.setUserIdentifier('mon_user_id');
+    // if (mounted) {
+    //   await AnalyticsProvider.of(context).setUserProperty('user_name', 'Thomas');
+    // }
+    // if (mounted) {
+    //   await AnalyticsProvider.of(context).setUserProperty('user_height', '183');
+    // }
   }
 
   void _incrementCounter() async {
@@ -101,7 +101,7 @@ class _MyHomePageState extends State<MyHomePage> {
       // final ref = await collectionReference.get();
       // debugPrint('Collection data: ${ref.docs}');
 
-      await collectionReference.doc('toto').delete();
+      // await collectionReference.doc('toto').delete();
 
       //debugPrint('Document added with id: ${documentReference.id}');
     } catch (error) {
